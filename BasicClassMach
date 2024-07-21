@@ -1,0 +1,80 @@
+import random
+
+class Vehicle:
+    def __init__(self, make, model, year):
+        self.make = make
+        self.model = model
+        self.year = year
+
+    def get_info(self):
+        return f"{self.year} {self.make} {self.model}"
+
+class Car(Vehicle):
+    def __init__(self, make, model, year, doors):
+        super().__init__(make, model, year)
+        self.doors = doors
+
+    def get_info(self):
+        return f"{super().get_info()} with {self.doors} doors."
+
+class Motorcycle(Vehicle):
+    def __init__(self, make, model, year):
+        super().__init__(make, model, year)
+
+    def get_info(self):
+        return f"{super().get_info()} (Motorcycle)"
+
+class VehicleShowroom:
+    def __init__(self):
+        self.vehicles = []
+
+    def add_vehicle(self, vehicle):
+        self.vehicles.append(vehicle)
+
+    def sell_vehicle(self, make, model):
+        for vehicle in self.vehicles:
+            if vehicle.make == make and vehicle.model == model:
+                self.vehicles.remove(vehicle)
+                return vehicle
+        return None
+
+    def show_vehicles(self):
+        if not self.vehicles:
+            return "No vehicles available for sale."
+        return "\n".join(vehicle.get_info() for vehicle in self.vehicles)
+
+def simulate_showroom(inventory):
+    makes = ["Toyota", "Honda", "Harley-Davidson", "Ford", "Chevrolet"]
+    models = ["Camry", "Civic", "Sportster", "Mustang", "Malibu"]
+    
+    for _ in range(10):
+        make = random.choice(makes)
+        model = random.choice(models)
+        year = random.randint(2000, 2023)
+        if random.choice([True, False]):  # Randomly decide whether to create a car or motorcycle
+            doors = random.choice([2, 4])
+            inventory.add_vehicle(Car(make, model, year, doors))
+        else:
+            inventory.add_vehicle(Motorcycle(make, model, year))
+
+if __name__ == "__main__":
+    showroom = VehicleShowroom()
+    simulate_showroom(showroom)
+
+    print("Available Vehicles for Sale:")
+    print(showroom.show_vehicles())
+
+    while True:
+        make = input("\nEnter the make of the vehicle you want to buy (or 'exit' to quit): ")
+        if make.lower() == 'exit':
+            break
+        model = input("Enter the model of the vehicle you want to buy: ")
+        sold_vehicle = showroom.sell_vehicle(make, model)
+        if sold_vehicle:
+            print(f"You have purchased: {sold_vehicle.get_info()}")
+        else:
+            print("Vehicle not found!")
+
+    print("\nThank you for visiting the showroom!")
+    print("Vehicles left for sale:")
+    print(showroom.show_vehicles())
